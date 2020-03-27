@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="bootstrap.min.css">
+    <style>
+      .parent{ background: #999;padding:10px;}
+      .child {background:#ccc;height:100px;margin:20px;}
+    </style>
+  </head>
+    <body>
+      <div class="d-flex p-3 bg-secondary text-white">
+        <div class="p-2 bg-warning" align="center">
+          Please Enter the Datas
+        </div>
+      </div>
+      </div>
+      <div class="card">
+        <form id="form1" class="card-body parent">
+          <div class="child col-lg-4">
+            <label for="name">Name</label><br>
+            <input type="text" id="name" name="name"><br>
+          </div>
+          <div class="child col-lg-4">
+            <label for="address">Address</label><br>
+          <input type="text" id="address" name="address">
+          </div>
+          <div class="col-lg-1">
+            <input type="button" class="btn btn-primary" onclick="myFunction()" value="Add to Table">
+          </div>
+          
+        </form>
+      </div>
+      <script>
+        var socket = new WebSocket("ws://localhost:4000/ws");
+        socket.onopen = function (event) {
+          socket.send("s1");
+        };
+        function myFunction() {
+          nameForm = document.getElementById("name").value;
+          addressForm = document.getElementById("address").value;
+          var xmlDoc = document.implementation.createDocument(null, 'root', null);
+          //adding elements
+          var name= xmlDoc.createElement('name');
+          name.textContent = nameForm;
+          xmlDoc.documentElement.appendChild(name);
+          var address = xmlDoc.createElement('address');
+          address.textContent = addressForm;
+          xmlDoc.documentElement.appendChild(address);
+          //making form back to empty state
+          document.getElementById("name").value = "";
+          document.getElementById("address").value = "";
+          //gettinga string representation
+          var serializer = new XMLSerializer();
+          var xmlString = serializer.serializeToString(xmlDoc);
+          socket.send(xmlString);          
+          }
+      </script> 
+    </body>
+</html>
